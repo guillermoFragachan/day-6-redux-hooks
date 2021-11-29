@@ -1,26 +1,29 @@
-import { createStore } from 'redux'
-// 'redux' is the main core library, nothing to do with React yet
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import mainReducer from '../reducers'
 
-// this is going to be the initial state for the WHOLE application
-// every time we start the app, or refresh the browser, the state will be resetted to this
+import thunk from 'redux-thunk'
+
+// my suggestion to start is to think as the FIRST THING about your STORE SHAPE
+// I'm planning to use the redux store for sharing the CART and also give to the store
+// initial values
+const aComposeThatAlwaysWorks = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+
+
 export const initialState = {
-  count: 0,
-  loading: true,
-  error: false,
-  products: [],
+  // I'm planning to store the application cart
+  favorites: {
+    content: [],
+  },
+  jobs:{
+     positions:[]
+  }
+  // think about the sub-entities you want to save into the redux store
+  // the cart deserves more than just an array value, let's create an object for it
+  // so if your structure expands in the future you can put into it all the cart-related
+  // properties
 }
 
-// createStore takes 3 arguments
-// 1) the reducer function
-// 2) the initial state of the application
-// 3) any middleware or enhancer function (optional)
+const configureStore = createStore(mainReducer, initialState, aComposeThatAlwaysWorks(applyMiddleware(thunk)))
 
-const configureStore = createStore(
-  mainReducer,
-  initialState,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-)
 
 export default configureStore
-// this configureStore will be needed for connecting redux to our react application
