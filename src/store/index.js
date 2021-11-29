@@ -2,6 +2,8 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import mainReducer from '../reducers'
 
 import thunk from 'redux-thunk'
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
 
 // my suggestion to start is to think as the FIRST THING about your STORE SHAPE
 // I'm planning to use the redux store for sharing the CART and also give to the store
@@ -23,7 +25,17 @@ export const initialState = {
   // properties
 }
 
-const configureStore = createStore(mainReducer, initialState, aComposeThatAlwaysWorks(applyMiddleware(thunk)))
+const persistConfig = {
+  key: 'root',
+  storage,
+}
+
+const persistedBigReducer = persistReducer(persistConfig, mainReducer)
+
+
+const configureStore = createStore(persistedBigReducer, initialState, aComposeThatAlwaysWorks(applyMiddleware(thunk)))
+
+export const persistor = persistStore(configureStore)
 
 
 export default configureStore
